@@ -1,0 +1,27 @@
+<project name="pathfinding" default="package" basedir=".">
+	<target name="package">
+		<property name="slick.install" value="../Slick" />
+		<delete dir="target" />
+		<mkdir dir="target/bin" />
+		<mkdir dir="target/src" />
+		<mkdir dir="target/res" />
+		<copy todir="target/src">
+			<fileset dir="src" />
+			<fileset dir="${slick.install}/src">
+				<include name="org/newdawn/slick/util/pathfinding/**/*.java" />
+			</fileset>
+		</copy>
+		<copy todir="target/res">
+			<fileset dir="res" />
+		</copy>
+		<javac debug="true" srcdir="target/src" destdir="target/bin" target="1.4" source="1.4">
+		</javac>
+		<jar destfile="target/pathfinding.jar" basedir="target/bin" />
+		<jar update="true" destfile="target/pathfinding.jar">
+			<fileset dir="target">
+				<include name="res/*" />
+			</fileset>
+		</jar>
+		<zip destfile="pathfinding.zip" basedir="target" />
+	</target>
+</project>
