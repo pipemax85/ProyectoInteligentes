@@ -57,8 +57,8 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 		if (mapa.bloquea(entidad, tx, ty)) {// Si el destino esta bloqueado no podemos llegar
 			return null;
 		}		
-		// initial state for A*. The closed group is empty. Only the starting
-		// tile is in the open list and it'e're already there
+		// Estado inicial de A *. El grupo cerrado está vacío. Sólo la baldosa
+		//de inicio está en la lista abierta y ya está allí
 		nodos[sx][sy].costo = 0;
 		nodos[sx][sy].profundidad = 0;
 		cerrado.clear();
@@ -67,11 +67,11 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 		
 		nodos[tx][ty].padre = null;
 		
-		// while we haven'n't exceeded our max search depth
+		// Mientras que no hemos excedido la profundidad máxima de la búsqueda
 		int maxProfundidad = 0;
 		while ((maxProfundidad < maxDistanciaBusqueda) && (abierto.size() != 0)) {
-			// pull out the first node in our open list, this is determined to 
-			// be the most likely to be the next step based on our heuristic
+			// Extraer el primer nodo en nuestra lista abierta, se determina que es el más 
+			//probable que sea el siguiente paso basado en nuestra heurística
 
 			Nodo actual = getPrimeroAbierto();
 			if (actual == nodos[tx][ty]) {
