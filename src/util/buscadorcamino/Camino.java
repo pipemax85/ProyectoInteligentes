@@ -9,118 +9,115 @@ import java.util.ArrayList;
  */
 public class Camino {
 	
-	private ArrayList<Step> pasos = new ArrayList<>();/** La lista de pasos que construyen este camino */
+	private ArrayList<Paso> pasos = new ArrayList<>();/** La lista de pasos que construyen este camino */
 	
 	public Camino() {
 		
 	}
 
 	/**
-	 * Get the length of the path, i.e. the number of steps
+	 * Obtener la longitud de la ruta, i.s. El número de pasos
 	 * 
-	 * @return The number of steps in this path
+	 * @return El número de pasos en esta ruta
 	 */
 	public int getLength() {
 		return pasos.size();
 	}
 	
 	/**
-	 * Get the step at a given index in the path
+	 * Obtener el paso en un índice dado de la ruta
 	 * 
-	 * @param index The index of the step to retrieve. Note this should
-	 * be >= 0 and < getLength();
-	 * @return The step information, the position on the map.
+	 * @param indice El índice del paso a recuperar. >= 0 and < getLength();
+	 * @return La información del paso, la posición en el mapa.
 	 */
-	public Step getPaso(int index) {
-		return (Step) pasos.get(index);
+	public Paso getPaso(int indice) {
+		return (Paso) pasos.get(indice);
 	}
 	
 	/**
-	 * Get the x coordinate for the step at the given index
+	 * Obtener la coordenada x para el paso en el índice dado
 	 * 
-	 * @param index The index of the step whose x coordinate should be retrieved
-	 * @return The x coordinate at the step
+	 * @param indice El índice del paso cuya coordenada x debe ser recuperada
+	 * @return La coordenada x en el paso
 	 */
-	public int getX(int index) {
-		return getPaso(index).x;
+	public int getX(int indice) {
+		return getPaso(indice).x;
 	}
 
 	/**
-	 * Get the y coordinate for the step at the given index
+	 * Obtener la coordenada y para el paso en el índice dado
 	 * 
-	 * @param index The index of the step whose y coordinate should be retrieved
-	 * @return The y coordinate at the step
+	 * @param indice El índice del paso cuya coordenada y debe ser recuperada
+	 * @return La coordenada y en el paso
 	 */
-	public int getY(int index) {
-		return getPaso(index).y;
+	public int getY(int indice) {
+		return getPaso(indice).y;
 	}
 	
 	/**
-	 * Append a step to the path.  
+	 * Añade un paso a la ruta.
 	 * 
-	 * @param x The x coordinate of the new step
-	 * @param y The y coordinate of the new step
+	 * @param x La coordenada x del nuevo paso
+	 * @param y La coordenada y del nuevo paso
 	 */
 	public void agregarPaso(int x, int y) {
-		pasos.add(new Step(x,y));
+		pasos.add(new Paso(x,y));
 	}
 
 	/**
-	 * Prepend a step to the path.  
+	 * El paso anterior en el camino
 	 * 
-	 * @param x The x coordinate of the new step
-	 * @param y The y coordinate of the new step
+	 * @param x La coordenada x del nuevo paso
+	 * @param y La coordenada y del nuevo paso
 	 */
 	public void pasoPrevio(int x, int y) {
-		pasos.add(0, new Step(x, y));
+		pasos.add(0, new Paso(x, y));
 	}
 	
 	/**
-	 * Check if this path contains the given step
+	 * Compruebe si esta ruta contiene el paso dado
 	 * 
-	 * @param x The x coordinate of the step to check for
-	 * @param y The y coordinate of the step to check for
-	 * @return True if the path contains the given step
+	 * @param x La coordenada x del paso para comprobar
+	 * @param y La coordenada y del paso para comprobar
+	 * @return True Si la ruta contiene el paso dado
 	 */
 	public boolean contains(int x, int y) {
-		return pasos.contains(new Step(x,y));
+		return pasos.contains(new Paso(x,y));
 	}
 	
 	/**
-	 * A single step within the path
-	 * 
-	 * @author Kevin Glass
+	 * Un solo paso dentro del camino
 	 */
-	public class Step {
-		/** The x coordinate at the given step */
+	public class Paso {
+		/** La coordenada x en el paso dado*/
 		private int x;
-		/** The y coordinate at the given step */
+		/** La coordenada y en el paso dado */
 		private int y;
 		
 		/**
-		 * Create a new step
+		 * Crear un nuevo paso
 		 * 
-		 * @param x The x coordinate of the new step
-		 * @param y The y coordinate of the new step
+		 * @param x La coordenada x del nuevo paso
+		 * @param y La coordenada y del nuevo paso
 		 */
-		public Step(int x, int y) {
+		public Paso(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
 		
 		/**
-		 * Get the x coordinate of the new step
+		 * Obtener la coordenada x del nuevo paso
 		 * 
-		 * @return The x coodindate of the new step
+		 * @return La coordenada x del nuevo paso
 		 */
 		public int getX() {
 			return x;
 		}
 
 		/**
-		 * Get the y coordinate of the new step
+		 * Obtener la coordenada y del nuevo paso
 		 * 
-		 * @return The y coodindate of the new step
+		 * @return La coordenada y del nuevo paso
 		 */
 		public int getY() {
 			return y;
@@ -137,8 +134,8 @@ public class Camino {
 		 * @see Object#equals(Object)
 		 */
 		public boolean equals(Object other) {
-			if (other instanceof Step) {
-				Step o = (Step) other;
+			if (other instanceof Paso) {
+				Paso o = (Paso) other;
 				
 				return (o.x == x) && (o.y == y);
 			}

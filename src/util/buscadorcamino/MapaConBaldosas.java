@@ -1,9 +1,8 @@
 package util.buscadorcamino;
 
 /**
- * The description for the data we're pathfinding over. This provides the contract
- * between the data being searched (i.e. the in game map) and the path finding
- * generic tools
+ * Proporciona la relacion entre los datos que se están buscando (en el mapa de juego)
+ *  y las herramientas genericas de pathfinding 
  */
 public interface MapaConBaldosas {
 
@@ -11,37 +10,34 @@ public interface MapaConBaldosas {
 	public int getAlturaEnBaldosas();
 	
 	/**
-	 * Notification that the path finder visited a given tile. This is 
-	 * used for debugging new heuristics.
+	 *La notificación de que el buscador de camino visitó una baldosa dada.
+	 * Esto se utiliza para depurar nuevas heurísticas.
 	 * 
-	 * @param x The x coordinate of the tile that was visited
-	 * @param y The y coordinate of the tile that was visited
+	 * @param x La coordenada x de la baldosa que fue visitada
+	 * @param y La coordenada y de la baldosa que fue visitada
 	 */
 	public void buscadorRutaVisitado(int x, int y);
 	
 	/**
-	 * Check if the given location is blocked, i.e. blocks movement of 
-	 * the supplied mover.
+	 * Compruebe si la ubicación dada está bloqueada, es decir, bloquea el movimiento de la entidad suministrada.
 	 * 
-	 * @param mover The mover that is potentially moving through the specified
-	 * tile.
-	 * @param x The x coordinate of the tile to check
-	 * @param y The y coordinate of the tile to check
-	 * @return True if the location is blocked
+	 * @param entidad La entidad que está potencialmente en movimiento a través de la baldosa especificado.
+	 * @param x La coordenada x de la baldosa a comprobar
+	 * @param y La coordenada y de la baldosa a comprobar
+	 * @return True Si la ubicación está bloqueada
 	 */
-	public boolean bloquea(Mover mover, int x, int y);
+	public boolean bloquea(Entidad entidad, int x, int y);
 	
 	/**
-	 * Get the cost of moving through the given tile. This can be used to 
-	 * make certain areas more desirable. A simple and valid implementation
-	 * of this method would be to return 1 in all cases.
+	 * Obtener el coste de movimiento a través de la baldosa dada. Esto se puede utilizar para hacer ciertas áreas más deseables. 
+	 * Una implementación sencilla y válida de este método sería devolver 1 en todos los casos.
 	 * 
-	 * @param mover The mover that is trying to move across the tile
-	 * @param sx The x coordinate of the tile we're moving from
-	 * @param sy The y coordinate of the tile we're moving from
-	 * @param tx The x coordinate of the tile we're moving to
-	 * @param ty The y coordinate of the tile we're moving to
-	 * @return The relative cost of moving across the given tile
+	 * @param entidad La entidad que está tratando de moverse a través de la baldosa
+	 * @param sx La coordenada x de la baldosa que estamos moviendo, origen 
+	 * @param sy La coordenada y de la baldosa que estamos moviendo, origen 
+	 * @param tx La coordenada x de la baldosa a la que nos estamos moviendo
+	 * @param ty La coordenada y de la baldosa a la que nos estamos moviendo
+	 * @return El coste relativo de moverse a través de la baldosa dada
 	 */
-	public float getCosto(Mover mover, int sx, int sy, int tx, int ty);
+	public float getCosto(Entidad entidad, int sx, int sy, int tx, int ty);
 }

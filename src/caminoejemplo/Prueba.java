@@ -26,11 +26,11 @@ public class Prueba extends JFrame {
 	private BuscadorRuta buscador;
 	private Camino camino;/** La última ruta encontrada para ale agente actual */
 	private Image[] imagenes = new Image[6];/** La lista de imágenes que se representan en el mapa */
-	private Image buffer;/** The offscreen buffer used for rendering in the wonder world of Java 2D */
-	private int seleccionadox = -1;/** The x coordinate of selected unit or -1 if none is selected */
-	private int seleccionadoy = -1;/** The y coordinate of selected unit or -1 if none is selected */
-	private int ultimoEncontradoX = -1;/** The x coordinate of the target of the last path we searched for - used to cache and prevent constantly re-searching */
-	private int ultimoEncontradoY = -1;/** The y coordinate of the target of the last path we searched for - used to cache and prevent constantly re-searching */
+	private Image buffer;/** El búfer fuera de pantalla usado para renderizar el Java 2D */
+	private int seleccionadox = -1;/** La coordenada x de la unidad seleccionada o -1 si no se ha seleccionado ninguna */
+	private int seleccionadoy = -1;/** La coordenada y de la unidad seleccionada o -1 si no se ha seleccionado ninguna */
+	private int ultimoEncontradoX = -1;/** La coordenada x del objetivo de la última ruta que buscamos - Utilizado para almacenar en caché y evitar volver a buscar innecesariamente*/
+	private int ultimoEncontradoY = -1;/** La coordenada y del objetivo de la última ruta que buscamos - Utilizado para almacenar en caché y evitar volver a buscar innecesariamente*/
 	
 	public Prueba() {
 		super("Juego introduccion a la inteligencia artificial");
@@ -74,11 +74,11 @@ public class Prueba extends JFrame {
 	}
 	
 	/**
-	 * Load a resource based on a file reference
+	 * Cargar un recurso basado en una referencia a un archivo
 	 * 
-	 * @param ref The reference to the file to load
-	 * @return The stream loaded from either the classpath or file system
-	 * @throws IOException Indicates a failure to read the resource
+	 * @param ref La referencia al archivo a cargar
+	 * @return La secuencia cargada desde el classpath o el sistema de archivos
+	 * @throws IOException Indica que no se ha podido leer el recurso
 	 */
 	private InputStream getResource(String ref) throws IOException {
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ref);
@@ -90,11 +90,11 @@ public class Prueba extends JFrame {
 	}
 
 	/**
-	 * Handle the mouse being moved. In this case we want to find a path from the
-	 * selected unit to the position the mouse is at
+	 * Cuando se mueve el raton. En este caso queremos encontrar un camino desde 
+	 * la unidad seleccionada hasta la posición en que el ratón esta.
 	 * 
-	 * @param x The x coordinate of the mouse cursor on the screen
-	 * @param y The y coordinate of the mouse cursor on the screen
+	 * @param x La coordenada x del cursor del ratón en la pantalla
+	 * @param y La coordenada y del cursor del ratón en la pantalla
 	 */
 	private void movioRaton(int x, int y) {
 		x -= 50;
@@ -110,7 +110,7 @@ public class Prueba extends JFrame {
 			if ((ultimoEncontradoX != x) || (ultimoEncontradoY != y)) {
 				ultimoEncontradoX = x;
 				ultimoEncontradoY = y;
-				camino = buscador.encontrarCamino(new UnitMover(mapa.getAgente(seleccionadox, seleccionadoy)), 
+				camino = buscador.encontrarCamino(new UnidadEntidad(mapa.getAgente(seleccionadox, seleccionadoy)), 
 									   seleccionadox, seleccionadoy, x, y);
 				repaint(0);
 			}
@@ -120,8 +120,12 @@ public class Prueba extends JFrame {
 	 * Handle the mouse being pressed. If the mouse is over a unit select it. Otherwise we move
 	 * the selected unit to the new target (assuming there was a path found)
 	 * 
-	 * @param x The x coordinate of the mouse cursor on the screen
-	 * @param y The y coordinate of the mouse cursor on the screen
+	 * Cuando se le da click. Si el ratón está sobre una unidad, selecciónelo. 
+	 * De lo contrario, mover la unidad seleccionada a la nueva meta (suponiendo que había una ruta 
+	 * de acceso encontrada)
+	 * 
+	 * @param x La coordenada x del cursor del ratón en la pantalla
+	 * @param y La coordenada y del cursor del ratón en la pantalla
 	 */
 	private void hizoClick(int x, int y) {
 		x -= 50;
@@ -140,7 +144,7 @@ public class Prueba extends JFrame {
 		} else {
 			if (seleccionadox != -1) {
 				mapa.limpiarVisitados();
-				camino = buscador.encontrarCamino(new UnitMover(mapa.getAgente(seleccionadox, seleccionadoy)), 
+				camino = buscador.encontrarCamino(new UnidadEntidad(mapa.getAgente(seleccionadox, seleccionadoy)), 
 						   			   seleccionadox, seleccionadoy, x, y);
 				
 				if (camino != null) {
@@ -162,7 +166,7 @@ public class Prueba extends JFrame {
 	 * @see java.awt.Container#paint(java.awt.Graphics)
 	 */
 	public void paint(Graphics graphics) {	
-		if (buffer == null) {// create an offscreen buffer to render the map
+		if (buffer == null) {// Crear un búfer fuera de pantalla para representar el mapa
 			buffer = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);			
 		}
 		Graphics g = buffer.getGraphics();
@@ -170,8 +174,8 @@ public class Prueba extends JFrame {
 		g.clearRect(0,0,600,600);
 		g.translate(50, 50);
 		
-		// cycle through the agentesvisual in the map drawing the appropriate
-		// image for the terrain and units where appropriate
+		// Ciclo a través de los agentes visuales en el mapa dibujando la imagen 
+		// apropiada para el terreno y unidades donde sea apropiado
 
 		for (int x=0;x<mapa.getAnchoEnBaldosas();x++) {
 			for (int y=0;y<mapa.getAlturaEnBaldosas();y++) {
@@ -189,7 +193,7 @@ public class Prueba extends JFrame {
 			}
 		}
 
-		if (seleccionadox != -1) {// if a unit is selected then draw a box around it
+		if (seleccionadox != -1) {// Si se selecciona una unidad, dibuja una caja alrededor de ella
 			g.setColor(Color.black);
 			g.drawRect(seleccionadox*16, seleccionadoy*16, 15, 15);
 			g.drawRect((seleccionadox*16)-2, (seleccionadoy*16)-2, 19, 19);
@@ -197,8 +201,7 @@ public class Prueba extends JFrame {
 			g.drawRect((seleccionadox*16)-1, (seleccionadoy*16)-1, 17, 17);
 		}
 		
-		// finally draw the buffer to the real graphics context in one
-		// atomic action
+		//Finalmente dibujar el búfer en el contexto gráfico real en una acción atómica
 		graphics.drawImage(buffer, 0, 0, null);
 	}
 	

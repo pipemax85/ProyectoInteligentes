@@ -1,25 +1,25 @@
 package util.buscadorcamino;
 
 /**
- * The description of a class providing a cost for a given tile based on a
- * target location and entity being moved. This heuristic controls what priority
- * is placed on different tiles during the search for a path
+ *Esta clase proporciona un costo para una baldosa dada en función de una 
+ * ubicación de destino y la entidad que se está moviendo. Esta heurística controla qué prioridad 
+ * se colocan en diferentes baldosas durante la búsqueda de un camino
  */
 public interface AEstrellaHeuristica {
 
 	/**
-	 * Get the additional heuristic cost of the given tile. This controls the
-	 * order in which tiles are searched while attempting to find a path to the
-	 * target location. The lower the cost the more likely the tile will be
-	 * searched.
+	 * Obtener el costo heurístico adicional  de la baldosa . Esto controla el 
+	 * orden en el que se realizan búsquedas de las baldosas mientras se intenta 
+	 * encontrar una ruta de acceso a la ubicación de destino. Cuanto menor sea el costo, 
+	 * más probable que la baldosa se busque.
 	 * 
-	 * @param map   The map on which the path is being found
-	 * @param mover The entity that is moving along the path
-	 * @param x     The x coordinate of the tile being evaluated
-	 * @param y		The y coordinate of the tile being evaluated
-	 * @param tx	The x coordinate of the target location
-	 * @param ty	Teh y coordinate of the target location
-	 * @return 		The cost associated with the given tile
+	 * @param map   El mapa en el que se encuentra el camino
+	 * @param mover La entidad que se mueve a lo largo del camino
+	 * @param x     La coordenada x de la baldosa que se está evaluando
+	 * @param y		La coordenada y de la baldosa que se está evaluando
+	 * @param tx	La coordenada x de la ubicación de destino
+	 * @param ty	La coordenada y de la ubicación de destino
+	 * @return 		El coste asociado con la baldosa
 	 */
-	public float getCosto(MapaConBaldosas map, Mover mover, int x, int y, int tx, int ty);
+	public float getCosto(MapaConBaldosas map, Entidad mover, int x, int y, int tx, int ty);
 }

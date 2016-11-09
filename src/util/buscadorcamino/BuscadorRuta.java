@@ -24,5 +24,5 @@ public interface BuscadorRuta {
 	 * @param ty La coordenada y de la ubicación de destino
 	 * @return La ruta encontrada de principio a fin, o null si no se puede encontrar ningún camino.
 	 */
-	public Camino encontrarCamino(Mover mover, int sx, int sy, int tx, int ty);
+	public Camino encontrarCamino(Entidad entidad, int sx, int sy, int tx, int ty);
 }

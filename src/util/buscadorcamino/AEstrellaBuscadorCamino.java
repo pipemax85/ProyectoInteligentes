@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import util.buscadorcamino.heuristicas.HeuristicaCercana;
 
-/** Una implementación de buscador de ruta que utiliza el algoritmo basado en heurísticas AStar para determinar una ruta. */
+/** Una implementación de buscador de ruta que utiliza el algoritmo basado en heurísticas Aestrella para determinar una ruta. */
 public class AEstrellaBuscadorCamino implements BuscadorRuta {
 	
 	private ArrayList cerrado = new ArrayList();/** El conjunto de nodos que se han buscado */
@@ -53,8 +53,8 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 	/**
 	 * @see BuscadorRuta#encontrarCamino(Mover, int, int, int, int)
 	 */
-	public Camino encontrarCamino(Mover mover, int sx, int sy, int tx, int ty) {
-		if (mapa.bloquea(mover, tx, ty)) {// Si el destino esta bloqueado no podemos llegar
+	public Camino encontrarCamino(Entidad entidad, int sx, int sy, int tx, int ty) {
+		if (mapa.bloquea(entidad, tx, ty)) {// Si el destino esta bloqueado no podemos llegar
 			return null;
 		}		
 		// initial state for A*. The closed group is empty. Only the starting
@@ -81,56 +81,53 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 			eliminarAbierto(actual);
 			agregarCerrado(actual);
 			
-			// search through all the neighbours of the current node evaluating
-			// them as next steps
+			// Busca a través de todos los vecinos del nodo actual evaluando
+			// Los siguientes pasos
 
 			for (int x=-1;x<2;x++) {
 				for (int y=-1;y<2;y++) {
-					// not a neighbour, its the current tile
+					// no es un vecino, es el actual
 					if ((x == 0) && (y == 0)) {
 						continue;
 					}	
-					// if we're not allowing diaganol movement then only 
-					// one of x or y can be set
+					//si no estamos permitiendo el movimiento diagonal entonces sólo uno de X o Y puede definirse
 					if (!permiteMoviDiagonal) {
 						if ((x != 0) && (y != 0)) {
 							continue;
 						}
 					}
-					// determine the location of the neighbour and evaluate it
+					// Determinar la ubicación del vecino y evaluarlo
 					int xp = x + actual.x;
 					int yp = y + actual.y;
 					
-					if (isValidLocation(mover,sx,sy,xp,yp)) {
-						// the cost to get to this node is cost the current plus the movement
-						// cost to reach this node. Note that the heursitic value is only used
-						// in the sorted open list
+					if (isValidLocation(entidad,sx,sy,xp,yp)) {
+						//El costo para llegar a este nodo es el costo 
+						//de la corriente más el costo de movimiento para llegar a este nodo. 
+						//Tenga en cuenta que el valor heurístico sólo se utiliza en la lista abierta ordenada
 
-						float costoSiguientePaso = actual.costo + getCostoMovimiento(mover, actual.x, actual.y, xp, yp);
+						float costoSiguientePaso = actual.costo + getCostoMovimiento(entidad, actual.x, actual.y, xp, yp);
 						Nodo vecino = nodos[xp][yp];
 						mapa.buscadorRutaVisitado(xp, yp);
 						
-						// if the new cost we've determined for this node is lower than 
-						// it has been previously makes sure the node hasn'e've
-						// determined that there might have been a better path to get to
-						// this node so it needs to be re-evaluated
+						//Si el nuevo coste que hemos determinado para este nodo es menor de lo que se ha asegurado 
+						//previamente, el nodo no ha determinado que podría haber habido un mejor camino para llegar
+						//a este nodo, por lo que necesita ser reevaluado
 
 						if (costoSiguientePaso < vecino.costo) {
 							if (inListaAbierto(vecino)) {
 								eliminarAbierto(vecino);
 							}
-							if (inClosedList(vecino)) {
+							if (inListaCerrado(vecino)) {
 								eliminarCerrado(vecino);
 							}
 						}
 						
-						// if the node hasn't already been processed and discarded then
-						// reset it's cost to our current cost and add it as a next possible
-						// step (i.e. to the open list)
+						//Si el nodo no ha sido procesado y desechado, restablezca su costo a nuestro costo actual y 
+						//agréguelo como un próximo paso posible (es decir, a la lista abierta)
 
-						if (!inListaAbierto(vecino) && !(inClosedList(vecino))) {
+						if (!inListaAbierto(vecino) && !(inListaCerrado(vecino))) {
 							vecino.costo = costoSiguientePaso;
-							vecino.heuristica = getCostoHeuristica(mover, xp, yp, tx, ty);
+							vecino.heuristica = getCostoHeuristica(entidad, xp, yp, tx, ty);
 							maxProfundidad = Math.max(maxProfundidad, vecino.setPadre(actual));
 							agregarAbierto(vecino);
 						}
@@ -139,16 +136,15 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 			}
 		}
 
-		// since we'e've run out of search 
-		// there was no path. Just return null
+		//Ya que nos hemos quedado sin búsqueda no había camino. Solo devuelve null
 
 		if (nodos[tx][ty].padre == null) {
 			return null;
 		}
 		
-		// At this point we've definitely found a path so we can uses the parent
-		// references of the nodes to find out way from the target location back
-		// to the start recording the nodes on the way.
+		//En este punto definitivamente hemos encontrado un camino para que podamos 
+		//usar las referencias de los nodos para encontrar el camino desde la ubicación 
+		//de destino de nuevo a la grabación de inicio de los nodos en el camino.
 
 		Camino camino = new Camino();
 		Nodo objetivo = nodos[tx][ty];
@@ -161,145 +157,142 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 	}
 
 	/**
-	 * Get the first element from the open list. This is the next
-	 * one to be searched.
+	 * Obtener el primer elemento de la lista abierta.
 	 * 
-	 * @return The first element in the open list
+	 * @return El primer elemento de la lista abierta
 	 */
 	protected Nodo getPrimeroAbierto() {
 		return (Nodo) abierto.primero();
 	}
 	
 	/**
-	 * Add a node to the open list
+	 * Agregar un nodo a la lista abierta
 	 * 
-	 * @param node The node to be added to the open list
+	 * @param nodo El nodo que se agregará a la lista abierta
 	 */
-	protected void agregarAbierto(Nodo node) {
-		abierto.agregar(node);
+	protected void agregarAbierto(Nodo nodo) {
+		abierto.agregar(nodo);
 	}
 	
 	/**
-	 * Check if a node is in the open list
+	 * Comprueba si un nodo está en la lista abierta
 	 * 
-	 * @param node The node to check for
-	 * @return True if the node given is in the open list
+	 * @param nodo El nodo a comprobar
+	 * @return True Si el nodo dado está en la lista abierta
 	 */
-	protected boolean inListaAbierto(Nodo node) {
-		return abierto.contiene(node);
+	protected boolean inListaAbierto(Nodo nodo) {
+		return abierto.contiene(nodo);
 	}
 	
 	/**
-	 * Remove a node from the open list
+	 * Eliminar un nodo de la lista abierta
 	 * 
-	 * @param node The node to remove from the open list
+	 * @param nodo El nodo a eliminar de la lista abierta
 	 */
-	protected void eliminarAbierto(Nodo node) {
-		abierto.eliminar(node);
+	protected void eliminarAbierto(Nodo nodo) {
+		abierto.eliminar(nodo);
 	}
 	
 	/**
-	 * Add a node to the closed list
+	 * Agregar un nodo a la lista cerrada
 	 * 
-	 * @param node The node to add to the closed list
+	 * @param nodo El nodo que se agrega a la lista cerrada
 	 */
-	protected void agregarCerrado(Nodo node) {
-		cerrado.add(node);
+	protected void agregarCerrado(Nodo nodo) {
+		cerrado.add(nodo);
 	}
 	
 	/**
-	 * Check if the node supplied is in the closed list
+	 * Compruebe si el nodo suministrado está en la lista cerrada
 	 * 
-	 * @param node The node to search for
-	 * @return True if the node specified is in the closed list
+	 * @param nodo El nodo a buscar
+	 * @return True Si el nodo especificado está en la lista cerrada
 	 */
-	protected boolean inClosedList(Nodo node) {
-		return cerrado.contains(node);
+	protected boolean inListaCerrado(Nodo nodo) {
+		return cerrado.contains(nodo);
 	}
 	
 	/**
-	 * Remove a node from the closed list
+	 * Eliminar un nodo de la lista cerrada
 	 * 
-	 * @param node The node to remove from the closed list
+	 * @param nodo El nodo a eliminar de la lista cerrada
 	 */
 	protected void eliminarCerrado(Nodo node) {
 		cerrado.remove(node);
 	}
 	
 	/**
-	 * Check if a given location is valid for the supplied mover
+	 * Compruebe si un lugar determinado es válido para la entidad suministrado
 	 * 
-	 * @param mover The mover that would hold a given location
-	 * @param sx The starting x coordinate
-	 * @param sy The starting y coordinate
-	 * @param x The x coordinate of the location to check
-	 * @param y The y coordinate of the location to check
-	 * @return True if the location is valid for the given mover
+	 * @param entidad La entidad que se intenta mover a una ubicacion determinada 
+	 * @param sx La coordenada x inicial
+	 * @param sy La coordenada y inicial
+	 * @param x La coordenada x de la ubicación para comprobar
+	 * @param y La coordenada y de la ubicación para comprobar
+	 * @return True Si la ubicación es válida para la entidad dada
 	 */
-	protected boolean isValidLocation(Mover mover, int sx, int sy, int x, int y) {
+	protected boolean isValidLocation(Entidad entidad, int sx, int sy, int x, int y) {
 		boolean invalid = (x < 0) || (y < 0) || (x >= mapa.getAnchoEnBaldosas()) || (y >= mapa.getAlturaEnBaldosas());
 		
 		if ((!invalid) && ((sx != x) || (sy != y))) {
-			invalid = mapa.bloquea(mover, x, y);
+			invalid = mapa.bloquea(entidad, x, y);
 		}
 		
 		return !invalid;
 	}
 	
 	/**
-	 * Get the cost to move through a given location
+	 * Obtener el coste para desplazarse por una ubicación determinada
 	 * 
-	 * @param mover The entity that is being moved
-	 * @param sx The x coordinate of the tile whose cost is being determined
-	 * @param sy The y coordiante of the tile whose cost is being determined
-	 * @param tx The x coordinate of the target location
-	 * @param ty The y coordinate of the target location
-	 * @return The cost of movement through the given tile
+	 * @param entidad La entidad que se está moviendo
+	 * @param sx La coordenada x de la baldosa cuyo coste se determina
+	 * @param sy La coordenada y de la baldosa cuyo coste se determina
+	 * @param tx La coordenada x de la ubicación de destino
+	 * @param ty La coordenada y de la ubicación de destino
+	 * @return El coste de movimiento a través de la baldosa dada
 	 */
-	public float getCostoMovimiento(Mover mover, int sx, int sy, int tx, int ty) {
-		return mapa.getCosto(mover, sx, sy, tx, ty);
+	public float getCostoMovimiento(Entidad entidad, int sx, int sy, int tx, int ty) {
+		return mapa.getCosto(entidad, sx, sy, tx, ty);
 	}
 
 	/**
-	 * Get the heuristic cost for the given location. This determines in which 
-	 * order the locations are processed.
+	 * Obtener el coste heurístico para la ubicación dada. 
+	 * Esto determina en qué orden se procesan las ubicaciones.
 	 * 
-	 * @param mover The entity that is being moved
-	 * @param x The x coordinate of the tile whose cost is being determined
-	 * @param y The y coordiante of the tile whose cost is being determined
-	 * @param tx The x coordinate of the target location
-	 * @param ty The y coordinate of the target location
-	 * @return The heuristic cost assigned to the tile
+	 * @param entidad La entidad que se está moviendo
+	 * @param x La coordenada x de la baldosa cuyo coste se determina
+	 * @param y La coordenada y de la baldosa cuyo coste se determina
+	 * @param tx La coordenada x de la ubicación de destino
+	 * @param ty La coordenada y de la ubicación de destino
+	 * @return El coste heurístico asignado a la baldosa
 	 */
-	public float getCostoHeuristica(Mover mover, int x, int y, int tx, int ty) {
-		return heuristica.getCosto(mapa, mover, x, y, tx, ty);
+	public float getCostoHeuristica(Entidad entidad, int x, int y, int tx, int ty) {
+		return heuristica.getCosto(mapa, entidad, x, y, tx, ty);
 	}
 	
-	/** A simple sorted list */
 	private class SortedList {
-		/** The list of elements */
 		private ArrayList list = new ArrayList();
 		
 		/**
-		 * Retrieve the first element from the list
+		 * Recuperar el primer elemento de la lista
 		 *  
-		 * @return The first element from the list
+		 * @return El primer elemento de la lista
 		 */
 		public Object primero() {
 			return list.get(0);
 		}
 		
 		/**
-		 * Empty the list
+		 * Vaciar la lista
 		 */
 		public void limpiar() {
 			list.clear();
 		}
 		
 		/**
-		 * Add an element to the list - causes sorting
+		 * Añadir un elemento a la lista, esto hace que necesitemos hacer nuevamente el sort
 		 * 
-		 * @param o The element to add
+		 * @param o El elemento a añadir
 		 */
 		public void agregar(Object o) {
 			list.add(o);
@@ -307,28 +300,28 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 		}
 		
 		/**
-		 * Remove an element from the list
+		 * Elimina un elemento de la lista
 		 * 
-		 * @param o The element to remove
+		 * @param o El elemento a eliminar
 		 */
 		public void eliminar(Object o) {
 			list.remove(o);
 		}
 	
 		/**
-		 * Get the number of elements in the list
+		 * Obtener el número de elementos en la lista
 		 * 
-		 * @return The number of element in the list
+		 * @return El número de elemento en la lista
  		 */
 		public int size() {
 			return list.size();
 		}
 		
 		/**
-		 * Check if an element is in the list
+		 * Comprueba si un elemento está en la lista
 		 * 
-		 * @param o The element to search for
-		 * @return True if the element is in the list
+		 * @param o El elemento a buscar
+		 * @return True Si el elemento está en la lista
 		 */
 		public boolean contiene(Object o) {
 			return list.contains(o);
@@ -336,22 +329,22 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 	}
 	
 	/**
-	 * A single node in the search graph
+	 * Un solo nodo en el gráfico de búsqueda
 	 */
 	private class Nodo implements Comparable {
 		
-		private int x;/** The x coordinate of the node */		
-		private int y;/** The y coordinate of the node */
-		private float costo;/** The path cost for this node */
-		private Nodo padre;/** The parent of this node, how we reached it in the search */
-		private float heuristica;/** The heuristic cost of this node */
-		private int profundidad;/** The search depth of this node */
+		private int x;/** La coordenada x del nodo */		
+		private int y;/** y La coordenada y del nodo */
+		private float costo;/** El coste de la ruta para este nodo */
+		private Nodo padre;/** El padre de este nodo */
+		private float heuristica;/** El coste heurístico de este nodo */
+		private int profundidad;/**La profundidad de búsqueda de este nodo */
 		
 		/**
-		 * Create a new node
+		 * Crea un nuevo nodo
 		 * 
-		 * @param x The x coordinate of the node
-		 * @param y The y coordinate of the node
+		 * @param x La coordenada x del nodo
+		 * @param y La coordenada y del nodo
 		 */
 		public Nodo(int x, int y) {
 			this.x = x;
@@ -359,10 +352,10 @@ public class AEstrellaBuscadorCamino implements BuscadorRuta {
 		}
 		
 		/**
-		 * Set the parent of this node
+		 * Establezca el padre de este nodo
 		 * 
-		 * @param parent The parent node which lead us to this node
-		 * @return The depth we have no reached in searching
+		 * @param padre El nodo padre que nos lleva a este nodo
+		 * @return La profundidad que no hemos alcanzado en la búsqueda
 		 */
 		public int setPadre(Nodo padre) {
 			profundidad = padre.profundidad + 1;

@@ -1,7 +1,8 @@
 package caminoejemplo;
 
+import util.buscadorcamino.Entidad;
 import util.buscadorcamino.MapaConBaldosas;
-import util.buscadorcamino.Mover;;
+import util.buscadorcamino.Entidad;
 
 /**
  * El mapa de nuestro juego. Contiene la configuracion de cada baldosa en . 
@@ -83,24 +84,24 @@ public class Mapa implements MapaConBaldosas {
 		agentes[x][y] = unit;
 	}
 	
-	public boolean bloquea(Mover mover, int x, int y) {// Bloquea los movimientos dependiendo de que sea
+	public boolean bloquea(Entidad entidad, int x, int y) {// Bloquea los movimientos dependiendo de que sea
 		if (getAgente(x,y) != 0) {
 			return true;
 		}
-		int unit = ((UnitMover) mover).getType();
-		if (unit == AVION) {// Los aviones pueden moverse a donde sea
+		int unidad = ((UnidadEntidad) entidad).getTipo();
+		if (unidad == AVION) {// Los aviones pueden moverse a donde sea
 			return false;
 		}
-		if (unit == TANQUE) {// Los tanques solo pueden moverse en el pasto
+		if (unidad == TANQUE) {// Los tanques solo pueden moverse en el pasto
 			return terreno[x][y] != CESPED;
 		}	
-		if (unit == BARCO) {// Los barcos solo pueden moverse en el agua
+		if (unidad == BARCO) {// Los barcos solo pueden moverse en el agua
 			return terreno[x][y] != AGUA;
 		}
 		return true;
 	}
 	
-	public float getCosto(Mover mover, int sx, int sy, int tx, int ty) {
+	public float getCosto(Entidad entidad, int sx, int sy, int tx, int ty) {
 		return 1;
 	}
 
